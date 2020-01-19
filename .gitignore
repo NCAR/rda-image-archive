@@ -1,3 +1,13 @@
+# mysql configuration
+mysql_args
+
+# metadata files 
+*.csv
+*.json
+
+# Notebook Checkpoints
+.ipynb_checkpoints
+
 # JPEG
 *.jpg
 *.jpeg
