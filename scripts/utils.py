@@ -448,6 +448,11 @@ def read_timestamped_catalog(output_dir):
 # }}}
 
 # database functions {{{
+
+# image = Table('image', metadata,
+#     Column('image_id', String(36), pimary_key=True),
+#     Column('document_id', ForeignKey('document.document_id')),
+#     Column('relative_order', Integer(4), nullable=False)
 # e.g., $ rdai -c database -o ~/tmp
 # to retrieve the database config and handle errors
 # to initialize a test database with the rdai schema

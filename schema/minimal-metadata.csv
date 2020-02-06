@@ -1,6 +1,6 @@
 archive.host_country               ,
+archive.name                       ,
 document.contact_person            ,
-archive.notes                      ,
 platform.name                      ,
 document.id_within_archive         ,
 document.id_within_archive_type    ,
