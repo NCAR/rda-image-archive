@@ -18,9 +18,9 @@ def verbose(msg):
         global args
         # None if not set at all
         if args.verbose and args.verbose >= 1:
-            print('RDAI: {}'.format(msg))
+            print('utils.py: {}'.format(msg))
     except NameError:
-        print('RDAI: {}'.format(msg))
+        print('utils.py: {}'.format(msg))
 
 def debug(msg):
     """Write a message to the console with some raw information"""
@@ -28,9 +28,9 @@ def debug(msg):
         global args
         # None if not set at all
         if args.verbose and args.verbose >= 2:
-            print('RDAI-DEBUG: {}'.format(msg))
+            print('utils.py: {}'.format(msg))
     except NameError:
-        print('RDAI-DEBUG: {}'.format(msg))
+        print('utils.py: {}'.format(msg))
 # }}} 
 
 # operating system functions {{{

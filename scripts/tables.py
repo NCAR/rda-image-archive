@@ -8,7 +8,6 @@
 Initialize archive, platform, document, and image tables.
 """
 
-##
 from sqlalchemy import Table, Column, MetaData
 from sqlalchemy import UniqueConstraint, ForeignKey
 from sqlalchemy import Integer, String, Date
@@ -36,7 +35,7 @@ document = Table('document', metadata,
     Column('document_id', Integer(), primary_key=True),
     Column('platform_id', ForeignKey('platform.platform_id')),
     Column('archive_id', ForeignKey('archive.archive_id')),
-    Column('id_within_archive', String(50), nullable=False),
+    Column('id_within_archive', String(255), nullable=False),
     Column('id_within_archive_type', String(50), nullable=False),
     # NARA ID, ARK, ISBN, DOI, etc. 
     # Refer to DataCite Metadata Schema 4.2 relatedIdentifierType.
@@ -58,6 +57,7 @@ document = Table('document', metadata,
             'persian gulf',
             'red sea'
         )
+    # TODO utils.py cannot yet pass a SET of values to ENUM 2020-02-05
     ),
     # Steve Worley recommended this subset
     # of the CF standardized regions list. See the full list here:
@@ -71,6 +71,7 @@ document = Table('document', metadata,
 
 image = Table('image', metadata,
     Column('uuid', String(36), primary_key=True),
+    Column('wid', String(255)),
     Column('document_id', ForeignKey('document.document_id')),
     Column('media_type', 
         Enum(
@@ -88,4 +89,3 @@ image = Table('image', metadata,
     # TODO determine relative order of document in logbook, 
     # or just check "between" semisequential uuids
 )
-##
