@@ -4,10 +4,6 @@
 # Colton Grainger 
 # CC-0 Public Domain
 
-"""
-Attempts to flatten json structures and assign UUIDs from sample images.
-"""
-
 import subprocess
 import configparser
 import os
