@@ -10,11 +10,14 @@ Directory structure
 
 import os
 import shutil
+import exiftool
 import tarfile
+import utils
+
 from datetime import datetime
-from pathlib import Path
-from os.path import expandvars
 from distutils.dir_util import copy_tree
+from os.path import expandvars
+from pathlib import Path
 
 class Directory:
 
@@ -135,7 +138,11 @@ class IngestDirectory(Directory):
     """Images are to be ingest from an IngestDirectory"""
 
     def __init__(self, **kwargs):
+        utils.get_fixed_seq()
         super().__init__(**kwargs)
+
+    def catalog(self):
+        pass
 
 class DataDirectory(Directory):
 
