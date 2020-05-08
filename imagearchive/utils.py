@@ -2,9 +2,13 @@
 #
 # 2019-07-17
 # Colton Grainger 
+# CC-0 Public Domain
 
 """
-Function definitions for the RDA images script (rdai).
+Utility functions for methods on the Directory classes, esp. for the image
+ingestion workflow. Defines `get_normalized_catalog`, which implicitly
+assumes that CSV or TSV metadata "tagfiles" are embedded in the directory tree
+containing images to be ingest.
 """
 
 import sys
@@ -169,9 +173,9 @@ def tail_flatten_list(flat_list, nested_lists):
         return flat_list
     new_nested_lists = []
     new_flat_list = flat_list
-    for nl in nested_lists:
-        items = filter(lambda I: not isinstance(I, list), nl)
-        lists = filter(lambda L: isinstance(L, list), nl) 
+    for nested_list in nested_lists:
+        items = filter(lambda I: not isinstance(I, list), nested_list)
+        lists = filter(lambda L: isinstance(L, list), nested_list) 
         new_flat_list.extend(items)
         new_nested_lists.extend(lists)
     return tail_flatten_list(new_flat_list, new_nested_lists)

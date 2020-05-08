@@ -14,10 +14,9 @@ from sqlalchemy import Integer, String, Date, DateTime, JSON
 from sqlalchemy import UniqueConstraint, ForeignKey
 from sqlalchemy import func
 
-from sqlalchemy.orm import relationship
-
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
 
 class Base(object):
     """
