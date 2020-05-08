@@ -11,11 +11,12 @@ Configuration for
 2. the Ingest, Data, and Output Directory classes and methods
 """
 
+import os
 import configparser
 import exiftool
 import shutil
 import tarfile
-import utils
+import imagearchive.utils
 
 from datetime import datetime
 from distutils.dir_util import copy_tree
@@ -23,7 +24,11 @@ from os.path import expandvars
 from pathlib import Path
 from sqlalchemy import create_engine
 
-def configure(config_file='default_config.ini'):
+
+# absolute path for ./default_config.ini
+default_config = os.path.abspath(os.path.join(os.path.dirname(__file__), 'default_config.ini'))
+
+def configure(config_file=default_config):
     """
     Reads a configuration (INI format) file that specifies the three working
     directories for binary image files, as well as the preferred database
@@ -47,7 +52,7 @@ def configure(config_file='default_config.ini'):
     configuration.read(config_file)
     return configuration
 
-def setup_database_engine(config_file='default_config.ini'):
+def setup_database_engine(config_file=default_config):
     """
     Wrapper around sqlalchemy.create_engine() that obtains a database URL
     from the specified config_file.
@@ -73,7 +78,7 @@ def setup_database_engine(config_file='default_config.ini'):
                     )
     return engine
 
-def setup_directories(config_file='default_config.ini'):
+def setup_directories(config_file=default_config):
     """
     Creates three working directories at paths specified in config_file (if they
     fail to exit) for binary image files by instanstiating three corresponding
@@ -207,7 +212,7 @@ class IngestDirectory(Directory):
     """Images are to be ingest from an IngestDirectory"""
 
     def __init__(self, **kwargs):
-        utils.get_fixed_seq()
+        imagearchive.utils.get_fixed_seq()
         super().__init__(**kwargs)
 
 class DataDirectory(Directory):

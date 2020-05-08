@@ -322,7 +322,7 @@ class Observation(Base):
     json = Column(JSON)
 
     image_id = Column(Integer, ForeignKey('image.id'))
-    image = relationship('image', back_populates='observations')
+    image = relationship('Image', back_populates='observations')
 
 Image.observations = relationship('Observation', order_by=Observation.id,
-        back_populates='documents', cascade='all, delete, delete-orphan')
+        back_populates='image', cascade='all, delete, delete-orphan')
