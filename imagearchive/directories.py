@@ -1,4 +1,4 @@
-#! /usr/bin/env python3
+# /usr/bin/env python3
 #
 # 2020-05-03 
 # Colton Grainger 
