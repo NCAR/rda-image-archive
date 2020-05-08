@@ -63,7 +63,7 @@ class Archive(Base):
 
     Archive.name is an archive's formal name.
 
-        If this archive has a wikipedia article dedicated to it,
+        If this archive has a Wikipedia article dedicated to it,
         what is the title of that article? If not, what would be?
 
     Archive.country_code is a (lowercase) ISO 3166-1 Alpha-3 code for
@@ -95,7 +95,9 @@ class Platform(Base):
         What *spatial* entity was responsible for recording the meteorological
         observations in this document? E.g., a single ship or weather station.
 
-    Platform.name is a platform's formal name (see note).
+    Platform.name is a platform's formal name (see note). C.f.
+        
+        https://en.wikipedia.org/wiki/Wikipedia:Naming_conventions_(ships)
 
     Platform.country_code is the (lowercase) ISO 3166-1 Alpha-3 code for
     the country that hosted the platform. A controlled vocabulary is
@@ -108,7 +110,7 @@ class Platform(Base):
     Note: Philip Brohan shared a few edge cases from his research (e.g., images
     containing meteorological data from every weather station on the Indian
     subcontinent). In these cases I suggest Platform.name=str(), and indicate
-    only the country_code. To accomodate such edge cases, the current
+    only the country_code. To accommodate such edge cases, the current
     one-to-many relationship Platform->Document fails and would need to be
     revised for Platform<->Document.
 
@@ -274,7 +276,9 @@ class Tag(Base):
     'north-indian', 'south-indian', 'antarctic', 'arctic', 'mediterranean',
     'black-sea', 'baltic-sea', 'persian-gulf', 'red-sea'
 
-    See the full list here: http://cfconventions.org/Data/standardized-region-list.
+    See the full list here: 
+
+        http://cfconventions.org/Data/standardized-region-list
 
     """
    
@@ -286,6 +290,40 @@ class Tag(Base):
     documents = relationship('Document', secondary=document_tags,
             back_populates='tags')
 
-# TODO define class Observation as one-to-many relationship Image->Observation
+# TODO enhance class Observation in one-to-many relationship Image->Observation
 # with metadata fields, for example, described in:
 # github.com/NCAR/rda-image-archive-dev/blob/master/schema/observation.sql
+
+class Observation(Base):
+
+    """
+    Abstraction for observations made on individual images.
+
+    Observation.json is an arbitrary JSON type, intended to capture any metadata
+    refinements made during an image's transcription.
+
+    JSON is provided as a facade for vendor-specific JSON types. Since it
+    supports JSON SQL operations, it only works on backends that have an
+    actual JSON type, currently:
+
+        PostgreSQL
+        MySQL as of version 5.7 (MariaDB as of the 10.2 series does not)
+        SQLite as of version 3.9
+
+    To implement a controlled vocabulary for this attribute, or to abandon
+    this attribute in favor of more specific meteorological metadata, see:
+
+    1. Sec. 4.2.1 "Elements observed", WMO-No. 8 (2010 update)
+       lwww.wmo.int/images/prog/www/IMOP/CIMO-Guide.html 
+
+    2. github.com/NCAR/rda-image-archive-dev/blob/master/schema/observation.sql
+
+    """
+
+    json = Column(JSON)
+
+    image_id = Column(Integer, ForeignKey('image.id'))
+    image = relationship('image', back_populates='observations')
+
+Image.observations = relationship('Observation', order_by=Observation.id,
+        back_populates='documents', cascade='all, delete, delete-orphan')
