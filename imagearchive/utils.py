@@ -60,7 +60,10 @@ def assign_uuid(filepath, overwrite=False):
         # Else, no uuid was read by exiftool, or overwrite has been set to True.
         else:
             et.execute(f'-ImageUniqueID={mint_uuid()}'.encode(), filepath.encode())
-            os.remove(filepath+"_original")
+            try:
+                os.remove(filepath+"_original")
+            except FileNotFoundError:
+                pass
 
             # Here, we only report back if the image file's uuid was updated.
             uuid = et.get_tag('ImageUniqueID', filepath)
@@ -115,40 +118,41 @@ def pool_metadata(tagfile, normalized_catalog):
     # Return normalized_catalog updated with key/value pairs from tagfile.
     return normalized_catalog
 
-def get_normalized_catalog(data_dir, overwrite=False):
-    """Catalogs the files and directories below the data_dir (relative path),
+def get_normalized_catalog(ingest_dir, overwrite=False):
+    """Catalogs the files and directories below the ingest_dir (relative path),
     given '.csv' or '.tsv' metadata (TODO or '.json') in the directory tree.
 
     :pool_metadata: "metadata gathering" function defined below.
 
-    :data_dir: Relative path to directory to be cataloged. Should be a directory.
+    :ingest_dir: Relative path to directory to be cataloged. Should be a directory.
     :returns: Nested json describing files, directories, and metadata.
 
     """
 
-    # Suppose data_dir is a parent.
-    parent = Path(data_dir)
+    # Suppose ingest_dir is a parent.
+    parent = Path(ingest_dir)
 
     # Initialize dictionary.
     normalized_catalog = {} 
 
     if parent.is_dir():
+
+        normalized_catalog['contents'] = list()
+
         # List relative paths to children.
         children = map(lambda x : os.path.join(parent, x), 
                 sorted(os.listdir(parent)))
+
         # Recurse down by calling `get_normalized_catalog` for each child.
         # We reserve the key 'contents' for inclusion of lists of child
         # dictionaries. The key 'contents' should appear 0 or 1 times in
         # each child dictionary.
-        normalized_catalog['contents'] = [
-                get_normalized_catalog(child, overwrite=overwrite) 
-                for child in children 
-                if not os.path.basename(child).startswith(".")]
-        # TODO Add some type of "ignore" capabilities. 
-        # For now, just ignore hidden files.  2019-11-21
 
-        # Determine if `child` is a metadata tag file, and if so, in which input format.
         for child in children:
+            if not os.path.basename(child).startswith("."):
+                normalized_catalog['contents'].append(
+                        get_normalized_catalog(child, overwrite=overwrite))
+            # Determine if `child` is a metadata tag file, and if so, in which input format.
             _, ext = os.path.splitext(child)
             # TODO Test for xml or json or ini files
             if ext in ['.csv', '.tsv']:
@@ -166,6 +170,7 @@ def get_normalized_catalog(data_dir, overwrite=False):
         if normalized_catalog['media_type'].startswith("image"):
             normalized_catalog['uuid'] = assign_uuid(str(parent), overwrite=overwrite)
 
+    breakpoint()
     return normalized_catalog
 
 def tail_flatten_list(flat_list, nested_lists):
